@@ -82,16 +82,17 @@ void Window::initializeGL()
     m_vao = new QOpenGLVertexArrayObject;
     m_vao->create();
 
+    const QRect geometry(0, 0, 800, 600);
     const QVector<QVector2D> vertexData {
         // First triangle.
-        QVector2D{0.0, 0.0},
-        QVector2D{800.0, 0.0},
-        QVector2D{800.0, 600.0},
+        QVector2D(geometry.x(), geometry.y()),
+        QVector2D(geometry.x() + geometry.width(), geometry.y()),
+        QVector2D(geometry.x() + geometry.width(), geometry.y() + geometry.height()),
 
         // Second triangle
-        QVector2D{0.0, 0.0},
-        QVector2D{800.0, 600.0},
-        QVector2D{0.0, 600.0},
+        QVector2D(geometry.x(), geometry.y()),
+        QVector2D(geometry.x() + geometry.width(), geometry.y() + geometry.height()),
+        QVector2D(geometry.x(), geometry.y() + geometry.height()),
     };
 
     m_geometryVbo.create();
