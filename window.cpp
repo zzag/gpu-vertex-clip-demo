@@ -8,14 +8,16 @@ static const char *vertexShaderCode =
         "layout (location = 0) in vec2 position;\n"
         "layout (location = 1) in vec4 clipRect;\n"
         "uniform mat4 projectionMatrix;\n"
+        "uniform mat4 modelMatrix;\n"
         "void main()\n"
         "{\n"
-        "    gl_ClipDistance[0] = position.x - clipRect[0];\n"
-        "    gl_ClipDistance[1] = clipRect[1] - position.x;\n"
-        "    gl_ClipDistance[2] = position.y - clipRect[2];\n"
-        "    gl_ClipDistance[3] = clipRect[3] - position.y;\n"
+        "    vec4 worldPosition = modelMatrix * vec4(position, 0.0, 1.0);\n"
+        "    gl_ClipDistance[0] = worldPosition.x - clipRect[0];\n"
+        "    gl_ClipDistance[1] = clipRect[1] - worldPosition.x;\n"
+        "    gl_ClipDistance[2] = worldPosition.y - clipRect[2];\n"
+        "    gl_ClipDistance[3] = clipRect[3] - worldPosition.y;\n"
         "\n"
-        "    gl_Position = projectionMatrix * vec4(position, 0.0, 1.0);\n"
+        "    gl_Position = projectionMatrix * modelMatrix * vec4(position, 0.0, 1.0);\n"
         "}\n";
 
 static const char *vertexShaderCodeGLES =
@@ -23,14 +25,16 @@ static const char *vertexShaderCodeGLES =
         "layout (location = 0) in vec2 position;\n"
         "layout (location = 1) in vec4 clipRect;\n"
         "uniform mat4 projectionMatrix;\n"
+        "uniform mat4 modelMatrix;\n"
         "void main()\n"
         "{\n"
-        "    gl_ClipDistance[0] = position.x - clipRect[0];\n"
-        "    gl_ClipDistance[1] = clipRect[1] - position.x;\n"
-        "    gl_ClipDistance[2] = position.y - clipRect[2];\n"
-        "    gl_ClipDistance[3] = clipRect[3] - position.y;\n"
+        "    vec4 worldPosition = modelMatrix * vec4(position, 0.0, 1.0);\n"
+        "    gl_ClipDistance[0] = worldPosition.x - clipRect[0];\n"
+        "    gl_ClipDistance[1] = clipRect[1] - worldPosition.x;\n"
+        "    gl_ClipDistance[2] = worldPosition.y - clipRect[2];\n"
+        "    gl_ClipDistance[3] = clipRect[3] - worldPosition.y;\n"
         "\n"
-        "    gl_Position = projectionMatrix * vec4(position, 0.0, 1.0);\n"
+        "    gl_Position = projectionMatrix * modelMatrix * vec4(position, 0.0, 1.0);\n"
         "}\n";
 
 static const char *fragmentShaderCode =
@@ -126,7 +130,12 @@ void Window::paintGL()
 
     QMatrix4x4 projectionMatrix;
     projectionMatrix.ortho(rect());
+
+    QMatrix4x4 modelMatrix;
+    modelMatrix.translate(20, 50);
+
     m_program->setUniformValue("projectionMatrix", projectionMatrix);
+    m_program->setUniformValue("modelMatrix", modelMatrix);
 
     // Setup the vertex buffer object.
     const int positionLocation = 0;
