@@ -107,15 +107,15 @@ void Window::initializeGL()
     m_clipRegion += QRect(300, 350, 100, 250);
     m_clipRegion += QRect(0, 400, 30, 150);
 
-    QVector<QVector2D> clipData;
-    clipData.reserve(m_clipRegion.rectCount() * 4);
+    QVector<QVector4D> clipData;
+    clipData.reserve(m_clipRegion.rectCount());
     for (const QRect &rect : m_clipRegion)
-        clipData << QVector2D(rect.x(), rect.x() + rect.width())
-                 << QVector2D(rect.y(), rect.y() + rect.height());
+        clipData << QVector4D(rect.x(), rect.x() + rect.width(),
+                              rect.y(), rect.y() + rect.height());
 
     m_clipVbo.create();
     m_clipVbo.bind();
-    m_clipVbo.allocate(clipData.constData(), clipData.size() * sizeof(QVector2D));
+    m_clipVbo.allocate(clipData.constData(), clipData.size() * sizeof(QVector4D));
 }
 
 void Window::paintGL()
